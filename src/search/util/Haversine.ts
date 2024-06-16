@@ -13,7 +13,7 @@ const EARTH_RADIUS = 6371 // Earth's average radius in km
  * @param point2 - {latitude: number, longitude: number}, values are expected in degrees
  * @returns number - distance between the two points in km
  */
-export default function haversineDistance(
+export default function calculateHaversineDistance(
   point1: Point,
   point2: Point
 ): number {
@@ -38,6 +38,15 @@ export default function haversineDistance(
       )
     )
 
+  // we must perform a sanity check thus that 0 <= h <= 1
+  // for h = hav(theta) = [1 - cos(distance / radius)] / 2
+  // as a limitation of the haversine formula
+  // if the check is true, then we swap the order of point1 and point2 thus that
+  // the formula once again applies
+  const h = (1 - Math.cos(haversineDistance / EARTH_RADIUS)) / 2
+  if (h < 0 || h > 1) {
+    return calculateHaversineDistance(point2, point1)
+  }
   return haversineDistance
 }
 

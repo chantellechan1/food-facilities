@@ -4,7 +4,7 @@ import {
   FoodFacilityPermit,
 } from "../../model/FoodFacilityPermit"
 import FoodFacilitiesRepository from "../../data/FoodFacilitiesRepository"
-import haversineDistance from "../util/Haversine"
+import calculateHaversineDistance from "../util/Haversine"
 
 @injectable()
 export default class SearchService {
@@ -60,7 +60,7 @@ export default class SearchService {
       FoodFacilityPermit & { distance: number }
     > = permits.map((permit) => ({
       ...permit,
-      distance: haversineDistance(
+      distance: calculateHaversineDistance(
         { latitude, longitude },
         { latitude: permit.latitude, longitude: permit.longitude }
       ),
