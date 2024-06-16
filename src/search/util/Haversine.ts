@@ -44,12 +44,3 @@ export default function haversineDistance(
 function toRadians(degrees: number): number {
   return degrees * (Math.PI / 180)
 }
-
-// test
-// TODO proper tests
-console.log(
-  haversineDistance(
-    { latitude: 37.780918, longitude: -122.392417 },
-    { latitude: 49.28431846907374, longitude: -122.82946350104375 }
-  )
-) // expect 1279.5 km
