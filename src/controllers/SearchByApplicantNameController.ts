@@ -2,6 +2,7 @@ import { Request } from "express"
 import { FacilityStatus, FoodFacilityPermit } from "../model/FoodFacilityPermit"
 import SearchService from "../services/SearchService"
 import { container, injectable } from "tsyringe"
+import { INVALID_REQUEST_BODY } from "../model/Errors"
 
 type SearchByApplicantNameRequestBody = {
   applicantName: string
@@ -40,10 +41,13 @@ export default class SearchByApplicantNameController {
     // verify request body and throw error if request is malformed
     const body: unknown = request.body
     if (!this.verifyRequestBody(body)) {
-      throw new Error("Invalid request")
+      throw new Error(INVALID_REQUEST_BODY)
     }
 
-    const permits = this.searchService.getAllFoodFacilityPermits()
+    const permits = this.searchService.searchByApplicantName(
+      body.applicantName,
+      body.status
+    )
     return permits
   }
 }

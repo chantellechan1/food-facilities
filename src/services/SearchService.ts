@@ -8,7 +8,7 @@ export default class SearchService {
 
   constructor() {
     const foodFacilitiesRepository = container.resolve(FoodFacilitiesRepository)
-    this.foodFacilityPermits = foodFacilitiesRepository.foodFacilityPermits // TODO: load data from file
+    this.foodFacilityPermits = foodFacilitiesRepository.foodFacilityPermits
   }
 
   getAllFoodFacilityPermits(): FoodFacilityPermit[] {
