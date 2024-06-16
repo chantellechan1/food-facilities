@@ -1,8 +1,11 @@
 import { Request } from "express"
-import { FacilityStatus, FoodFacilityPermit } from "../model/FoodFacilityPermit"
+import {
+  FacilityStatus,
+  FoodFacilityPermit,
+} from "../../model/FoodFacilityPermit"
 import SearchService from "../services/SearchService"
 import { container, injectable } from "tsyringe"
-import { INVALID_REQUEST_BODY } from "../model/Errors"
+import { INVALID_REQUEST_BODY } from "../../model/Errors"
 
 type SearchByApplicantNameRequestBody = {
   applicantName: string
