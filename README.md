@@ -23,7 +23,7 @@ Response Body:
 FoodFacilityPermit[]
 ```
 
-Search by the permit applicant's name and optionally the permit applicant's status. This search looks for each matches for the applicant's name, including case sensitivity. If `status` is not specified, permit applicants of any status matching the `applicantName` will be returned. The response body is an array of type `FoodFacilityPermit`, as defined [here](https://github.com/chantellechan1/food-facilities/blob/2f0b531a281c08bd5be9bdf0c30d12f57174bf3b/api/model/FoodFacilityPermit.ts#L1).
+Search by the permit applicant's name and optionally the permit applicant's status. This search looks for each matches for the applicant's name, including case sensitivity. If `status` is not specified, permit applicants of any status matching the `applicantName` will be returned. The response body is an array of type `FoodFacilityPermit`, as defined [here](https://github.com/chantellechan1/food-facilities/blob/main/api/model/FoodFacilityPermit.ts).
 
 #### POST /search/address
 
@@ -36,7 +36,7 @@ Response Body:
 FoodFacilityPermit[]
 ```
 
-Search by the permit applicant's address. This search matches partial string matches and is case insensitive. The response body is an array of type `FoodFacilityPermit`, as defined [here](https://github.com/chantellechan1/food-facilities/blob/2f0b531a281c08bd5be9bdf0c30d12f57174bf3b/api/model/FoodFacilityPermit.ts#L1).
+Search by the permit applicant's address. This search matches partial string matches and is case insensitive. The response body is an array of type `FoodFacilityPermit`, as defined [here](https://github.com/chantellechan1/food-facilities/blob/main/api/model/FoodFacilityPermit.ts).
 
 #### POST /search/coordinates
 
@@ -51,7 +51,7 @@ Response Body:
 FoodFacilityPermitWithDistance[]
 ```
 
-Search by distance from a provided set of coordinates. Optionally, specify whether to include permit applicants who are not approved. If `isOnlyReturnApprovedPermits` is not supplied, by default only approved permit applicants will be included. The response body is an array of type `FoodFacilityPermitWithDistance`, as defined [here](https://github.com/chantellechan1/food-facilities/blob/2f0b531a281c08bd5be9bdf0c30d12f57174bf3b/api/model/FoodFacilityPermit.ts#L1). The responses are sorted by increasing distance from the provided coordinates set.
+Search by distance from a provided set of coordinates. Optionally, specify whether to include permit applicants who are not approved. If `isOnlyReturnApprovedPermits` is not supplied, by default only approved permit applicants will be included. The response body is an array of type `FoodFacilityPermitWithDistance`, as defined [here](https://github.com/chantellechan1/food-facilities/blob/main/api/model/FoodFacilityPermit.ts). The responses are sorted by increasing distance from the provided coordinates set.
 
 ## Get Started
 
@@ -85,7 +85,7 @@ In this project, code is grouped by domain instead of responsiblility. This is t
 
 Instead of using the Google Maps API to determine the coordinate distance between two points, this project implements the [Haversine formula](https://en.wikipedia.org/wiki/Haversine_formula) for distance between two points on a sphere, using [Earth's globally average radius](https://en.wikipedia.org/wiki/Earth_radius) of 6371 km. This is because running the Haversine distance calculation locally for each Food Facility Permit location from given target coordinates can be performed synchronously, without the need to launch an async external API call for each permit location. Quick experimentation showed calculation of Haversine distance for each row of the dataset completes in 3 - 7 milliseconds, whereas external APIs are expected to have a response time of 100 milliseconds - 1 second. Should the distance needed to travel between two coordinates (considering roads, ferries, walking paths, etc), instead of the as-the-crow-flies distance be considered, the [Google Maps Distance Matrix API](https://developers.google.com/maps/documentation/distance-matrix/overview) should be used.
 
-Tests in this project use the `Jest` testing framework, with `Babel` for transpiling typescript to javascript.
+Tests in this project use the [Jest](https://jestjs.io/) testing framework, with [Babel](https://babeljs.io/) for transpiling Typescript to Javascript.
 
 ### Tradeoffs & Critque
 
