@@ -2,6 +2,7 @@ import { container, injectable } from "tsyringe"
 import {
   FacilityStatus,
   FoodFacilityPermit,
+  FoodFacilityPermitWithDistance,
 } from "../../model/FoodFacilityPermit"
 import FoodFacilitiesRepository from "../../data/FoodFacilitiesRepository"
 import calculateHaversineDistance from "../util/Haversine"
@@ -56,15 +57,14 @@ export default class SearchService {
       : this.foodFacilityPermits
 
     // calculate distance from each permit to the given coordinates
-    const permitsWithDistance: Array<
-      FoodFacilityPermit & { distance: number }
-    > = permits.map((permit) => ({
-      ...permit,
-      distance: calculateHaversineDistance(
-        { latitude, longitude },
-        { latitude: permit.latitude, longitude: permit.longitude }
-      ),
-    }))
+    const permitsWithDistance: Array<FoodFacilityPermitWithDistance> =
+      permits.map((permit) => ({
+        ...permit,
+        distance: calculateHaversineDistance(
+          { latitude, longitude },
+          { latitude: permit.latitude, longitude: permit.longitude }
+        ),
+      }))
 
     // sort ascending by distance
     permitsWithDistance.sort((a, b) => a.distance - b.distance)

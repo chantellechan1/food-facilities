@@ -1,56 +1,105 @@
 # Food Facilities Challenge
 
-Use this data set about Mobile Food Facilities in San Francisco (https://data.sfgov.org/Economy-and-Community/Mobile-Food-Facility-Permit/rqzj-sfat/data) to build an application. Please clarify with your recruiter first if you will be doing the Backend Focused or Frontend Focused version of the project, and what language you will be doing the challenge in. Make sure this is clear before you start this challenge.
+## Overview
 
-**Backend Focused Version**
+This application provides an API through which food facility permits in San Franciso can be retrived through searching by applicant name, street name/address, or by latitude and longitude coordinates. It is deployed on Vercel at https://food-facilities.vercel.app. The original dataset for mobile food facility permits in San Francisco is available [here](https://data.sfgov.org/Economy-and-Community/Mobile-Food-Facility-Permit/rqzj-sfat/data).
 
-Your Application should have the following features:
-- Search by name of applicant. Include optional filter on "Status" field.
-- Search by street name. The user should be able to type just part of the address. Example: Searching for "SAN" should return food trucks on "SANSOME ST"
-- Given a latitude and longitude, the API should return the 5 nearest food trucks. By default, this should only return food trucks with status "APPROVED", but the user should be able to override this and search for all statuses.
-  - You can use any external services to help with this (e.g. Google Maps API).
-- We write automated tests and we would like you to do so as well.
+### Routes
 
-*Bonus Points:*
-- Use an API documentation tool
-- Provide a dockerfile with everything necessary to run your application (for backend focused candidates)
-- Build a UI
+#### GET /
 
-**Frontend Focused Version**
+A simple route to check if the API is working. Returns `Food Facilities API` as plaintext.
 
-Your application should have the following features:
-- Search by name of applicant. Include optional filter on "Status" field.
-- Search by street name. The user should be able to type just part of the address. Example: Searching for "SAN" should return food trucks on "SANSOME ST"
-- Build a UI using a frontend framework like React. You have creative freedom to design the UI however you would like.
+#### POST /search/applicantName
 
-*Bonus points:*
-- Write automated tests
-- Use an API documentation tool
-- Build the other features listed in the Backend Focused Version
+```
+Request Body:
+{
+  applicantName: string
+  status?: "APPROVED" | "REQUESTED" | "SUSPEND" | "EXPIRED"
+}
 
-## README
+Response Body:
+FoodFacilityPermit[]
+```
 
-Your code should include a README file including the following items:
+Search by the permit applicant's name and optionally the permit applicant's status. This search looks for each matches for the applicant's name, including case sensitivity. If `status` is not specified, permit applicants of any status matching the `applicantName` will be returned. The response body is an array of type `FoodFacilityPermit`, as defined [here](https://github.com/chantellechan1/food-facilities/blob/2f0b531a281c08bd5be9bdf0c30d12f57174bf3b/api/model/FoodFacilityPermit.ts#L1).
 
-- Description of the problem and solution;
-- Reasoning behind your technical/architectural decisions
-- Critique section:
-  - What would you have done differently if you had spent more time on this?
-  - What are the trade-offs you might have made?
-  - What are the things you left out?
-  - What are the problems with your implementation and how would you solve them if we had to scale the application to a large number of users?
-- Please document any steps necessary to run your solution and your tests.
+#### POST /search/address
 
-## How we review
+```
+Request Body:
+{
+  address: string
+}
+Response Body:
+FoodFacilityPermit[]
+```
 
-We value quality over feature-completeness. It is fine to leave things aside provided you call them out in your project's README.
-The aspects of your code we will assess include:
+Search by the permit applicant's address. This search matches partial string matches and is case insensitive. The response body is an array of type `FoodFacilityPermit`, as defined [here](https://github.com/chantellechan1/food-facilities/blob/2f0b531a281c08bd5be9bdf0c30d12f57174bf3b/api/model/FoodFacilityPermit.ts#L1).
 
-- Clarity: does the README clearly and concisely explains the problem and solution? Are technical tradeoffs explained?
-- Correctness: does the application do what was asked? If there is anything missing, does the README explain why it is missing?
-- Code quality: is the code simple, easy to understand, and maintainable? Are there any code smells or other red flags? Does object-oriented code follows principles such as the single responsibility principle? Is the coding style consistent with the language's guidelines? Is it consistent throughout the codebase?
-- Security: are there any obvious vulnerabilities?
-- Technical choices: do choices of libraries, databases, architecture etc. seem appropriate for the chosen application?
+#### POST /search/coordinates
 
-## What to send back to our team
-Please send an email back to your point of contact with a compressed (zip) file of your Github project repo when done.
+```
+Request Body:
+{
+  latitude: number
+  longitude: number
+  isOnlyReturnApprovedPermits?: boolean
+}
+Response Body:
+FoodFacilityPermitWithDistance[]
+```
+
+Search by distance from a provided set of coordinates. Optionally, specify whether to include permit applicants who are not approved. If `isOnlyReturnApprovedPermits` is not supplied, by default only approved permit applicants will be included. The response body is an array of type `FoodFacilityPermitWithDistance`, as defined [here](https://github.com/chantellechan1/food-facilities/blob/2f0b531a281c08bd5be9bdf0c30d12f57174bf3b/api/model/FoodFacilityPermit.ts#L1). The responses are sorted by increasing distance from the provided coordinates set.
+
+## Get Started
+
+1. First, from the root directory of the project, install all dependencies.
+
+```
+npm install
+```
+
+2. Run the application locally.
+
+```
+npm run dev
+```
+
+3. Run the tests.
+
+```
+npm run test
+```
+
+4. After following steps from the [Vercel documentation for Express apps](https://vercel.com/guides/using-express-with-vercel), deploy.
+
+```
+vercel --prod
+```
+
+## Architecture choices
+
+In this project, code is grouped by domain instead of responsiblility. This is to enable files for releated features to sit next to each other. Domains that are expected to be used across features are grouped by function from the root directory. Similarly, all search routes are grouped together under `<base_url>/search` using an Express `Router`. Note that instead of using the `/src` directory as is typical, the Express app source code is placed in `/api` as is default for Vercel deployed Express apps.
+
+Instead of using the Google Maps API to determine the coordinate distance between two points, this project implements the [Haversine formula](https://en.wikipedia.org/wiki/Haversine_formula) for distance between two points on a sphere, using [Earth's globally average radius](https://en.wikipedia.org/wiki/Earth_radius) of 6371 km. This is because running the Haversine distance calculation locally for each Food Facility Permit location from given target coordinates can be performed synchronously, without the need to launch an async external API call for each permit location. Quick experimentation showed calculation of Haversine distance for each row of the dataset completes in 3 - 7 milliseconds, whereas external APIs are expected to have a response time of 100 milliseconds - 1 second. Should the distance needed to travel between two coordinates (considering roads, ferries, walking paths, etc), instead of the as-the-crow-flies distance be considered, the [Google Maps Distance Matrix API](https://developers.google.com/maps/documentation/distance-matrix/overview) should be used.
+
+Tests in this project use the `Jest` testing framework, with `Babel` for transpiling typescript to javascript.
+
+### Tradeoffs & Critque
+
+The most glaring tradeoff is the decision to load the `Mobile_Food_Faciltiy_Permit` csv to memory using `csv-parse` instead of using a database. This was done for speed of implementation, though it should be noted that this approach is not scalable. It will immediately fail when write functionality is required and more than a single server is required, as the dataset will be out of sync. As Vercel deployment enables scaling to many instances of a serverless function, a central datastore will need to be implemented before deployment of write functionality.
+
+In addition to the need for a database, this application would require additional tests at the service and route level before production deployment. Test scripts with expected request and response bodies should be set up before deployment to actual uses. Should the application be scaled to a large number of users, load balancers across a variable number of horizontally scaled servers should be used. Additionally, caches could be used to store the most frequently read searches. Should writes come into play, and should they need to be completed with variable urgency, a queue for write jobs could be implemented.
+
+With more time, I would implement extension of this project as detailed in the [Potential next steps](#potential-next-steps) section.
+
+## Potential next steps
+
+1. Implement authentication to secure the API.
+2. Implement centralized datastore.
+3. Implement pagination of search results.
+4. Implement more flexible retrieval of results by allowing combinations of filters on the dataset.
+5. Implement flexible distance type, allowing either as-the-crow-files or actual distance to travel.
+6. Implement frontend!

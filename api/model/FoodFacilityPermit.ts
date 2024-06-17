@@ -1,3 +1,8 @@
+/**
+ * This type denotes a food facility permit. Values taken from Mobile_Food_Facility_Permit.csv
+ * Fields are marked as possibily undefined following columns that have a non-zero count of empty rows,
+ * as shown here: https://docs.google.com/spreadsheets/d/1XgU9tu7teYOXiLBIgLd32HBuM4kKAEuZw-FzcLyey_A
+ */
 export type FoodFacilityPermit = {
   locationId: number
   applicant: string
@@ -29,6 +34,12 @@ export type FoodFacilityPermit = {
   zipCodes: number | undefined
   neighborhoodsOld: number | undefined
 }
+
+type Distance = {
+  distance: number // distance in km from a given point
+}
+
+export type FoodFacilityPermitWithDistance = FoodFacilityPermit & Distance
 
 export enum FacilityType {
   Truck = "Truck",
