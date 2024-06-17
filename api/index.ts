@@ -16,6 +16,8 @@ app.get("/", (_: Request, res: Response) => {
 // register search routes
 app.use("/search", SearchRoutes)
 
-app.listen(port, () => {
+app.listen(3000, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`)
 })
+
+module.exports = app

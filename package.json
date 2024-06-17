@@ -2,12 +2,11 @@
   "name": "food-facilities",
   "version": "1.0.0",
   "description": "Use this data set about Mobile Food Facilities in San Francisco (https://data.sfgov.org/Economy-and-Community/Mobile-Food-Facility-Permit/rqzj-sfat/data) to build an application. Please clarify with your recruiter first if you will be doing the Backend Focused or Frontend Focused version of the project, and what language you will be doing the challenge in. Make sure this is clear before you start this challenge.",
-  "main": "dist/index.js",
+  "main": "api/index.ts",
   "scripts": {
     "test": "jest",
-    "build": "npx tsc",
-    "start": "node ./dist/index.js",
-    "dev": "nodemon src/index.ts"
+    "start": "node api/index.ts",
+    "dev": "nodemon api/index.ts"
   },
   "keywords": [],
   "author": "Chantelle Chan",

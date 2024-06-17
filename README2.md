@@ -9,7 +9,7 @@
 ## Architecture choices
 
 - grouped code modularly (by domain) as in past projects I've found this approach to be more maintainable over time and faster for onboarding new team members
--
+- Note that instead of using the `/src` directory as is typical, all backend code is placed in `/api` as is default for vercel express apps.
 
 ## Critque
 
